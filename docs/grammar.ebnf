@@ -1,0 +1,29 @@
+(* com grammar, EBNF (ISO 14977 style).  Whitespace and // comments are ignored. *)
+
+program    = { statement } ;
+
+statement  = let-stmt | assign-stmt | print-stmt | printc-stmt
+           | while-stmt | if-stmt | block ;
+
+let-stmt    = "let" , ident , "=" , expr , ";" ;
+assign-stmt = ident , "=" , expr , ";" ;
+print-stmt  = "print" , expr , ";" ;
+printc-stmt = "printc" , expr , ";" ;
+while-stmt  = "while" , expr , block ;
+if-stmt     = "if" , expr , block , [ "else" , ( if-stmt | block ) ] ;
+block       = "{" , { statement } , "}" ;
+
+(* precedence, lowest to highest; all binary operators are left-associative *)
+expr       = additive , { ( "<" | ">" | "==" | "!=" ) , additive } ;
+additive   = term , { ( "+" | "-" ) , term } ;
+term       = primary , { ( "*" | "/" | "%" ) , primary } ;
+primary    = number | ident | "(" , expr , ")" | "-" , primary ;
+
+(* lexical rules *)
+number     = "1" , { "1" } ;                 (* base 1: the value is the count of 1s *)
+ident      = ( letter | "_" ) , { letter | digit | "_" } ;   (* at most 63 characters *)
+letter     = "a" | ... | "z" | "A" | ... | "Z" ;
+digit      = "0" | "1" | ... | "9" ;         (* only inside names; never starts a number *)
+comment    = "//" , { any character except newline } ;
+
+(* keywords: let print printc while if else *)

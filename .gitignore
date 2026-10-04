@@ -1,0 +1,9 @@
+build/*
+!build/.gitkeep
+*.o
+*.d
+a.out
+out
+out.c
+*.dSYM/
+.vscode/
